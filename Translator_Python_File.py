@@ -12,7 +12,18 @@ model = MarianMTModel.from_pretrained(MODEL_NAME)
 device = "cuda" if torch.cuda.is_available() else "cpu"
 model.to(device)
 
+# NEW: lets the function accept either the classifier label or our existing category name
 # Dialect Normalization Layer (Key Innovation)
+DIALECT_LABEL_ALIASES = {
+    "EGY": "EGY",
+    "GLF": "GLF",
+    "IRQ": "IRQ",
+    "MSA": "MSA",
+    "LEV": "LEV",
+    "LAV": "LEV",
+    "MGH": "MGH",
+    "NOR": "MGH"
+}
 # Simple normalization dictionaries per dialect
 DIALECT_NORMALIZATION = {
     "EGY": {
@@ -32,9 +43,13 @@ DIALECT_NORMALIZATION = {
 
     # Question words
     "فين": "أين",
-    "ليه": "لماذا"
+    "ليه": "لماذا",
+
+    # NEW: common Egyptian colloquial form for demo/example coverage
+    "كدة": "هكذا",
 
     },
+
     "LEV": {
     # Negation
     "مو": "ليس",
@@ -53,6 +68,7 @@ DIALECT_NORMALIZATION = {
     "ليش": "لماذا"
 
     },
+
     "GLF": {
     # Desire
     "أبغى": "أريد",
@@ -105,8 +121,21 @@ def normalize_dialect(text: str, dialect: str):
     """
     applied_rules = []
 
+    # NEW: maps alternate dialect labels to the category names already used in DIALECT_NORMALIZATION
+    dialect = DIALECT_LABEL_ALIASES.get(dialect, dialect)
     rules = DIALECT_NORMALIZATION.get(dialect, {})
-    tokens = text.split()
+
+     # NEW: start with the original full text so multi-word phrase rules can be applied before splitting into tokens
+    normalized_text = text
+    
+    # NEW: apply phrase-level replacements first
+    # This is necessary because text.split() would break "مش تعبان" into two separate tokens
+    for source, target in rules.items():
+        if " " in source and source in normalized_text:
+            normalized_text = normalized_text.replace(source, target)
+            applied_rules.append(f"{source} → {target}")
+
+    tokens = normalized_text.split()
 
     normalized_tokens = []
     for token in tokens:

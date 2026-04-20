@@ -9,9 +9,9 @@ from sklearn.metrics import classification_report, confusion_matrix, accuracy_sc
 
 # --- 1. LOAD SPLIT DATASETS ---
 # Replace paths with your actual local file locations
-train_df = pd.read_csv("dart_ready_train.csv")
-test_df = pd.read_csv("dart_ready_test.csv")
-dev_df = pd.read_csv("dart_ready_dev.csv") # Optional: use for validation during tuning
+train_df = pd.read_csv("datasets/dart_ready_train.csv")
+test_df = pd.read_csv("datasets/dart_ready_test.csv")
+dev_df = pd.read_csv("datasets/dart_ready_dev.csv") # Optional: use for validation during tuning
 
 target_col = 'dialect'
 text_col = 'text'

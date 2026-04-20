@@ -47,7 +47,6 @@ DIALECT_NORMALIZATION = {
 
     # NEW: common Egyptian colloquial form for demo/example coverage
     "كدة": "هكذا",
-
     },
 
     "LEV": {
@@ -60,13 +59,17 @@ DIALECT_NORMALIZATION = {
     "بدي": "أريد",
 
     # Verbs
-    "راح": "ذهب",   # context‑dependent, but safer than leaving it
+    "راح": "ذهب",
     "إجا": "جاء",
 
     # Location/question
     "وين": "أين",
-    "ليش": "لماذا"
+    "ليش": "لماذا",
 
+    # NEW: common Levantine forms
+    "شو": "ماذا",
+    "هلق": "الآن",
+    "كتير": "كثيرا"
     },
 
     "GLF": {
@@ -79,26 +82,35 @@ DIALECT_NORMALIZATION = {
 
     # Question
     "وين": "أين",
-    "ليش": "لماذا"
+    "ليش": "لماذا",
 
+    # NEW: common Gulf forms
+    "الحين": "الآن",
+    "شلون": "كيف",
+    "وايد": "كثيرا",
+    "مب": "ليس"
     },
+
     "IRQ": {
-        
     # Negation
     "ماكو": "لا يوجد",
     "مو": "ليس",
 
     # Verbs
-    "أريد": "أريد",  # often already MSA
+    "أريد": "أريد",
     "أروح": "أذهب",
 
     # Question
     "وين": "أين",
-    "ليش": "لماذا"
+    "ليش": "لماذا",
 
+    # NEW: common Iraqi forms
+    "شنو": "ماذا",
+    "هسه": "الآن",
+    "كلش": "جدا"
     },
-    "MGH" : {
-        
+
+    "MGH": {
     # Negation
     "ما": "لا",
 
@@ -108,10 +120,13 @@ DIALECT_NORMALIZATION = {
 
     # Question
     "فين": "أين",
-    "علاش": "لماذا"
+    "علاش": "لماذا",
 
+    # NEW: common Maghrebi forms
+    "دابا": "الآن",
+    "بزاف": "كثيرا",
+    "هاد": "هذا"
     }
-
 }
 
 def normalize_dialect(text: str, dialect: str):

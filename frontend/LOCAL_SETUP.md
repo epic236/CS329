@@ -19,6 +19,7 @@ npm install -g pnpm
 Navigate to the project directory in your terminal:
 ```bash
 cd path/to/context-aware-arabic-translator
+cd ~/GitHub/CS329/frontend
 ```
 
 ### 2. Install Dependencies

@@ -3,6 +3,7 @@ from Dialect_Detector import detect_dialect
 
 from transformers import MarianMTModel, MarianTokenizer
 import torch
+import re
 
 MODEL_NAME = "Helsinki-NLP/opus-mt-ar-en"
 
@@ -154,9 +155,12 @@ def normalize_dialect(text: str, dialect: str):
 
     normalized_tokens = []
     for token in tokens:
-        if token in rules:
-            normalized_tokens.append(rules[token])
-            applied_rules.append(f"{token} → {rules[token]}")
+        # NEW: strip punctuation around token before matching
+        clean_token = re.sub(r"[^\u0600-\u06FF]", "", token)
+
+        if clean_token in rules:
+            normalized_tokens.append(rules[clean_token])
+            applied_rules.append(f"{clean_token} → {rules[clean_token]}")
         else:
             normalized_tokens.append(token)
 
@@ -208,10 +212,19 @@ def dialect_aware_translate(text: str, detect_dialect):
     """
     dialect = detect_dialect(text)
 
+    # NEW: stop early if the input does not appear to be Arabic
+    if dialect == "NON_ARABIC":
+        return {
+            "input_text": text,
+            "detected_dialect": dialect,
+            "normalized_text": text,
+            "applied_normalization_rules": [],
+            "translation": "Input does not appear to be Arabic text.",
+            "ambiguities": []
+        }
+
     normalized_text, applied_rules = normalize_dialect(text, dialect)
-
     translation = translate_ar_to_en(normalized_text)
-
     ambiguity_notes = get_ambiguity_notes(text)
 
     return {
@@ -222,11 +235,20 @@ def dialect_aware_translate(text: str, detect_dialect):
         "translation": translation,
         "ambiguities": ambiguity_notes
     }
+
 # Example Run (Perfect for Live Demo)
 
-example = "19,حد يقدر يقول غير كدة"
+examples = [
+    "أنا رايح البيت ومش تعبان",          # EGY
+    "شو بدّي أعمل هلق؟",                # LEV
+    "شلونك الحين؟ هذا وايد زين",         # GLF
+    "شنو تريد هسه؟",                    # IRQ
+    "دابا بغيت نمشي، هاد بزاف",          # MGH
+    "hello what is this"                 # NON_ARABIC
+]
 
-result = dialect_aware_translate(example, detect_dialect)
-
-for k, v in result.items():
-    print(f"{k}: {v}")
+for example in examples:
+    print("\n" + "=" * 60)
+    result = dialect_aware_translate(example, detect_dialect)
+    for k, v in result.items():
+        print(f"{k}: {v}")
